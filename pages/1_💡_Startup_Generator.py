@@ -1,16 +1,15 @@
 import streamlit as st
 import time
 from datetime import datetime
+from groq import Groq
 
-# Configure page settings
 st.set_page_config(
-    page_title="NIC Venture Forge | Startup Generator",
+    page_title="NIC Venture Studio | Startup Generator",
     page_icon="💡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Corporate CSS for National Incubation Center (Blue/Slate Theme)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -25,7 +24,6 @@ st.markdown("""
         max-width: 1200px;
     }
 
-    /* Generator Header */
     .generator-header {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.8) 100%);
         border: 1px solid rgba(59, 130, 246, 0.3);
@@ -33,22 +31,6 @@ st.markdown("""
         padding: 2rem 2.2rem;
         margin-bottom: 1.8rem;
         box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.4);
-    }
-
-    .gen-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(37, 99, 235, 0.25);
-        border: 1px solid rgba(96, 165, 250, 0.4);
-        color: #93C5FD;
-        padding: 4px 12px;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 0.8rem;
     }
 
     .generator-header h1 {
@@ -66,7 +48,6 @@ st.markdown("""
         line-height: 1.5;
     }
 
-    /* Form Container Card */
     div[data-testid="stForm"] {
         background: rgba(19, 28, 49, 0.7);
         border: 1px solid rgba(51, 65, 85, 0.85);
@@ -75,7 +56,13 @@ st.markdown("""
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
-    /* Output Memo Container */
+    div[data-testid="stForm"] .stSelectbox,
+    div[data-testid="stForm"] .stMultiSelect,
+    div[data-testid="stForm"] .stTextInput,
+    div[data-testid="stForm"] .stTextArea {
+        margin-bottom: 0.9rem;
+    }
+
     .memo-output-wrapper {
         background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(19, 28, 49, 0.9) 100%);
         border: 1px solid rgba(59, 130, 246, 0.35);
@@ -108,7 +95,6 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Fixed Bottom Footer */
     .nic-footer-container {
         position: fixed;
         left: 0;
@@ -134,29 +120,39 @@ st.markdown("""
         color: #60A5FA;
         font-weight: 600;
     }
+
+    [data-testid="stSidebarNav"], 
+    ul[data-testid="stSidebarNavItems"], 
+    div[data-testid="stSidebarNavSeparator"],
+    section[data-testid="stSidebar"] > div:first-child > div:first-child > ul,
+    [data-testid="stSidebarNav"] * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------------------------------------------
-# SAFE API KEY RETRIEVAL & ERROR HANDLING
-# -------------------------------------------------------------
 groq_api_key = None
-
-# First, check st.secrets
 if "GROQ_API_KEY" in st.secrets:
     secret_val = st.secrets["GROQ_API_KEY"]
     if secret_val and isinstance(secret_val, str) and secret_val.strip() != "your_groq_api_key_here":
         groq_api_key = secret_val.strip()
 
-# Sidebar: Environment & API Key Status
 with st.sidebar:
     st.markdown("### 🏢 NIC Venture Studio")
     st.caption("Principal Venture Architect Suite")
+
+    st.markdown("#### 🧭 Platform Navigation")
+    st.page_link("Home.py", label="Home", icon="🏠")
+    st.page_link("pages/1_💡_Startup_Generator.py", label="Startup Generator", icon="💡")
+
     st.divider()
 
     st.markdown("#### 🔑 Groq API Configuration")
     if not groq_api_key:
-        # Fallback input for convenience if user hasn't edited secrets.toml
         manual_key = st.text_input(
             "Enter Groq API Key (Session Override):",
             type="password",
@@ -172,15 +168,14 @@ with st.sidebar:
 
     st.divider()
     st.markdown("#### ⚡ Active Model Engine")
-    st.code("llama-3.3-70b-versatile", language="text")
+    st.code("openai/gpt-oss-120b", language="text")
     st.caption("High-context, high-reasoning venture synthesis model via Groq LPUs.")
 
-# Check API key requirement: Show st.error and stop if missing
 if not groq_api_key:
     st.error("""
     ❌ **Groq API Key Missing or Not Configured**
     
-    To use the **NIC Venture Forge Startup Generator**, please configure your Groq API key:
+    To use the **NIC Venture Studio Startup Generator**, please configure your Groq API key:
     1. Open the file [`.streamlit/secrets.toml`](file:///.streamlit/secrets.toml).
     2. Replace `"your_groq_api_key_here"` with your actual Groq API key:
        ```toml
@@ -191,7 +186,6 @@ if not groq_api_key:
     *Get your free API key at [console.groq.com/keys](https://console.groq.com/keys).*
     """)
     
-    # Display fixed footer even on stopped page
     st.markdown("""
     <div class="nic-footer-container">
         <p class="nic-footer-text">
@@ -201,22 +195,14 @@ if not groq_api_key:
     """, unsafe_allow_html=True)
     st.stop()
 
-# Initialize Groq client
 try:
-    from groq import Groq
     groq_client = Groq(api_key=groq_api_key)
 except Exception as e:
     st.error(f"Failed to initialize Groq client: {str(e)}")
     st.stop()
 
-# -------------------------------------------------------------
-# MAIN GENERATOR INTERFACE
-# -------------------------------------------------------------
 st.markdown("""
 <div class="generator-header">
-    <div class="gen-badge">
-        <span>💡</span> VENTURE ARCHITECTURE STUDIO
-    </div>
     <h1>Startup Idea & Investment Memo Generator</h1>
     <p>
         Formulate institutional-grade startup investment & execution memoranda calibrated to the National Incubation Center (NIC) investment standards. Powered by Groq LPU™ ultra-fast inference.
@@ -224,7 +210,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Preset Templates for Rapid Evaluation
 st.markdown("##### ⚡ Quick Load Architectural Presets (Optional)")
 preset_cols = st.columns(3)
 
@@ -271,11 +256,9 @@ with preset_cols[2]:
 
 st.write("")
 
-# INTERACTIVE FORM
 with st.form("startup_generator_form"):
     st.markdown("### 📝 Venture Parameters & Seed Inputs")
 
-    # 1. Market Problem Statement (Full width at the very top)
     problem_statement = st.text_area(
         "Market Problem Statement",
         value=st.session_state.problem_input,
@@ -283,7 +266,6 @@ with st.form("startup_generator_form"):
         help="Elaborate on the acute customer friction, inefficiency, or structural bottleneck in the target market."
     )
 
-    # 2. Domain Vertical & Keywords (Two columns right below problem statement)
     st.markdown("##### 💡 Domain Vertical & Strategic Themes")
     sector_col1, sector_col2 = st.columns([1, 1])
 
@@ -335,66 +317,57 @@ with st.form("startup_generator_form"):
             help="Comma-separated concepts, technologies, and strategic angles (e.g. AI Agents, Computer Vision, WhatsApp Native, Offline-first)."
         )
 
-    # 3. Architectural & Market Filters (3 columns at the bottom of the form)
     st.markdown("##### 🎯 Architectural & Market Filters")
-    col_region, col_monetization, col_capital = st.columns(3)
+    filt_col1, filt_col2 = st.columns(2, gap="medium")
 
-    with col_region:
+    with filt_col1:
         target_region = st.selectbox(
             "Target Market Region",
             options=[
-                "Pakistan & South Asia (National Focus)",
-                "Middle East & North Africa (MENA / GCC)",
-                "Southeast Asia (ASEAN)",
-                "North America (US & Canada)",
-                "European Union (EU)",
-                "Global Emerging Markets"
+                "Pakistan & South Asia",
+                "MENA Region",
+                "Emerging Markets",
+                "Global / Remote"
             ],
             index=0,
             help="Geographic territory where primary customer acquisition and initial pilots will deploy."
         )
 
-    with col_monetization:
-        monetization_models = st.multiselect(
-            "Preferred Monetization Models",
-            options=[
-                "B2B SaaS Subscription (Per-seat / Per-org)",
-                "Marketplace Take Rate / Commission (5% - 18%)",
-                "Usage-based / Metered API Consumption",
-                "Transaction Fees & Interchange Revenue",
-                "Freemium with Enterprise Custom Contracts",
-                "Hardware + Software-as-a-Service (HaaS)",
-                "Data Analytics & Anonymized Industry Intelligence"
-            ],
-            default=[
-                "B2B SaaS Subscription (Per-seat / Per-org)",
-                "Transaction Fees & Interchange Revenue"
-            ],
-            help="Select one or more target economic engines for the venture."
-        )
-
-    with col_capital:
+    with filt_col2:
         capital_intensity = st.selectbox(
             "Risk Appetite / Capital Intensity",
             options=[
-                "Bootstrap / Lean Capital ($10,000 - $50,000) — Fast to Break-Even",
-                "Angel / Incubator Seed ($100,000 - $350,000) — Product-Market Fit Sprint",
-                "Venture Scale Institutional ($500,000 - $2,500,000+) — Hyper-Growth"
+                "Bootstrap / Lean MVP ($10k-$25k)",
+                "Angel / Seed ($100k-$350k)",
+                "Series A ($1M+)"
             ],
             index=1,
             help="Available runway and risk profile determining MVP scope and technical complexity."
         )
 
-    # 4. Form Submit Button
+    monetization_models = st.multiselect(
+        "Preferred Monetization Models",
+        options=[
+            "B2B SaaS",
+            "Transaction Fees / Take-Rate",
+            "Marketplace Commission",
+            "Freemium / API",
+            "Enterprise Licensing",
+            "Hardware + Service (HaaS)"
+        ],
+        default=[
+            "B2B SaaS",
+            "Transaction Fees / Take-Rate"
+        ],
+        help="Select one or more target revenue and monetization mechanisms for the venture."
+    )
+
     submitted = st.form_submit_button(
-        "⚡ Synthesize Institutional Investment Memorandum",
+        "⚡ Generate Startup Plan",
         type="primary",
         use_container_width=True
     )
 
-# -------------------------------------------------------------
-# MASTER PROMPT DESIGN & GENERATION ENGINE
-# -------------------------------------------------------------
 SYSTEM_PROMPT = """You are the Principal Venture Architect at the National Incubation Center (NIC).
 Your responsibility is to evaluate market friction and architect an exhaustive, institutional-grade startup investment & execution memorandum.
 
@@ -466,11 +439,11 @@ if submitted:
 
 Produce the exhaustive memorandum now adhering strictly to the 6-pillar framework."""
 
-        with st.spinner("Synthesizing Institutional Investment Memorandum via Groq LPU (llama-3.3-70b-versatile)..."):
+        with st.spinner("Synthesizing Institutional Investment Memorandum via Groq LPU (openai/gpt-oss-120b)..."):
             start_time = time.time()
             try:
                 response = groq_client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="openai/gpt-oss-120b",
                     messages=[
                         {"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": user_prompt}
@@ -482,7 +455,6 @@ Produce the exhaustive memorandum now adhering strictly to the 6-pillar framewor
                 generation_duration = round(time.time() - start_time, 2)
                 generated_memo = response.choices[0].message.content
                 
-                # Save to session state
                 st.session_state["generated_memo"] = generated_memo
                 st.session_state["generation_time"] = generation_duration
                 st.session_state["generated_sector"] = sector
@@ -490,17 +462,13 @@ Produce the exhaustive memorandum now adhering strictly to the 6-pillar framewor
             except Exception as e:
                 st.error(f"Groq API Error: {str(e)}")
 
-# -------------------------------------------------------------
-# DISPLAY GENERATED MEMORANDUM & EXPORT OPTIONS
-# -------------------------------------------------------------
 if "generated_memo" in st.session_state:
     st.write("")
     st.divider()
     
-    # Telemetry Bar
     telemetry_col1, telemetry_col2, telemetry_col3 = st.columns([2, 1, 1])
     with telemetry_col1:
-        st.success(f"✨ **Memorandum Synthesized Successfully** in **{st.session_state.get('generation_time', 0)}s** using `llama-3.3-70b-versatile`.")
+        st.success(f"✨ **Memorandum Synthesized Successfully** in **{st.session_state.get('generation_time', 0)}s** using `openai/gpt-oss-120b`.")
     with telemetry_col2:
         st.caption(f"Sector: **{st.session_state.get('generated_sector', 'Venture')}**")
     with telemetry_col3:
@@ -513,7 +481,6 @@ if "generated_memo" in st.session_state:
             use_container_width=True
         )
 
-    # Render Markdown in container
     st.markdown('<div class="memo-output-wrapper">', unsafe_allow_html=True)
     st.markdown(f"""
     <div class="memo-top-bar">
@@ -525,7 +492,6 @@ if "generated_memo" in st.session_state:
     st.markdown(st.session_state["generated_memo"])
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Bottom Download Option for Convenience
     st.write("")
     col_d1, col_d2, col_d3 = st.columns([1, 2, 1])
     with col_d2:
@@ -537,7 +503,6 @@ if "generated_memo" in st.session_state:
             use_container_width=True
         )
 
-# FIXED BOTTOM FOOTER
 st.markdown("""
 <div class="nic-footer-container">
     <p class="nic-footer-text">

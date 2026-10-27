@@ -1,11 +1,11 @@
-# 🚀 NIC Venture Forge — Multi-Page Generative AI Application
+# 🚀 NIC Venture Studio — Multi-Page Generative AI Application
 
-An institutional-grade Venture Architecture & Startup Synthesis engine designed for the **National Incubation Center (NIC)**. Powered by **Groq LPU™** and Meta's **LLaMA 3.3 70B Versatile** model.
+An institutional-grade Venture Architecture & Startup Synthesis engine designed for the **National Incubation Center (NIC)**. Powered by **Groq LPU™** and the **openai/gpt-oss-120b** model.
 
 ---
 
 ## 🏛️ Project Overview
-**NIC Venture Forge** empowers venture builders, incubator directors, and visionary founders to translate raw market problems into exhaustive, institutional-grade startup investment & execution memoranda within sub-second inference speeds.
+**NIC Venture Studio** empowers venture builders, incubator directors, and visionary founders to translate raw market problems into exhaustive, institutional-grade startup investment & execution memoranda within sub-second inference speeds.
 
 ### Key Capabilities:
 - **Landing Page (`Home.py`)**:

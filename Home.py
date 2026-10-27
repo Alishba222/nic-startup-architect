@@ -1,31 +1,26 @@
 import streamlit as st
 
-# Configure page settings
 st.set_page_config(
-    page_title="NIC Venture Forge",
+    page_title="NIC Venture Studio",
     page_icon="🚀",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Corporate CSS for National Incubation Center (Blue/Slate Theme)
 st.markdown("""
 <style>
-    /* Google Fonts import */
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Main Container Padding */
     .block-container {
         padding-top: 1.8rem;
         padding-bottom: 5.5rem;
         max-width: 1200px;
     }
 
-    /* Hero Banner Styling */
     .nic-hero {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.85) 50%, rgba(15, 23, 42, 0.95) 100%);
         border: 1px solid rgba(59, 130, 246, 0.3);
@@ -48,22 +43,6 @@ st.markdown("""
         pointer-events: none;
     }
 
-    .nic-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(37, 99, 235, 0.2);
-        border: 1px solid rgba(96, 165, 250, 0.4);
-        color: #93C5FD;
-        padding: 6px 14px;
-        border-radius: 9999px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 1.2rem;
-    }
-
     .nic-hero h1 {
         font-size: 2.85rem;
         font-weight: 800;
@@ -81,7 +60,6 @@ st.markdown("""
         margin-bottom: 1.8rem;
     }
 
-    /* Action Banner */
     .nic-cta-box {
         display: flex;
         align-items: center;
@@ -104,7 +82,6 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* Feature Cards */
     .feature-card {
         background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
         border: 1px solid rgba(51, 65, 85, 0.8);
@@ -146,34 +123,6 @@ st.markdown("""
         line-height: 1.55;
     }
 
-    /* Metric Cards Custom Styling */
-    div[data-testid="stMetric"] {
-        background: rgba(19, 28, 49, 0.75);
-        border: 1px solid rgba(51, 65, 85, 0.7);
-        border-radius: 12px;
-        padding: 1rem 1.25rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    div[data-testid="stMetricLabel"] p {
-        color: #94A3B8 !important;
-        font-size: 0.82rem !important;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-weight: 600;
-    }
-
-    div[data-testid="stMetricValue"] div {
-        color: #60A5FA !important;
-        font-weight: 800 !important;
-        font-size: 1.85rem !important;
-    }
-
-    div[data-testid="stMetricDelta"] {
-        font-size: 0.8rem !important;
-    }
-
-    /* Guide Box */
     .guide-step {
         display: flex;
         align-items: flex-start;
@@ -213,7 +162,6 @@ st.markdown("""
         line-height: 1.45;
     }
 
-    /* Fixed Bottom Footer */
     .nic-footer-container {
         position: fixed;
         left: 0;
@@ -239,45 +187,44 @@ st.markdown("""
         color: #60A5FA;
         font-weight: 600;
     }
+
+    [data-testid="stSidebarNav"], 
+    ul[data-testid="stSidebarNavItems"], 
+    div[data-testid="stSidebarNavSeparator"],
+    section[data-testid="stSidebar"] > div:first-child > div:first-child > ul,
+    [data-testid="stSidebarNav"] * {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar Navigation & Branding
 with st.sidebar:
-    st.image(
-        "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format&fit=crop&q=80",
-        caption="NIC Venture Forge Lab",
-        use_container_width=True
-    )
-    st.markdown("### 🏢 National Incubation Center")
-    st.caption("Empowering Visionary Founders Across Emerging Markets")
-    
-    st.divider()
-    
+    st.markdown("### 🏢 NIC Venture Studio")
+    st.caption("Principal Venture Architect Suite")
+
     st.markdown("#### 🧭 Platform Navigation")
-    st.info("👈 **Select Mode from Sidebar:**\n\nClick on **`1_💡_Startup_Generator`** above to formulate institutional-grade startup investment & execution memoranda.")
-    
+    st.page_link("Home.py", label="Home", icon="🏠")
+    st.page_link("pages/1_💡_Startup_Generator.py", label="Startup Generator", icon="💡")
+
     st.divider()
-    
+
     st.markdown("#### ⚡ Hardware Engine Specs")
     st.markdown("""
     - **Hardware:** Groq Tensor Streaming Processor (LPU™)
-    - **Model:** `llama-3.3-70b-versatile`
+    - **Model:** `openai/gpt-oss-120b`
     - **Context Window:** 128,000 tokens
     - **Throughput:** ~750 tokens/sec
     """)
 
-# HERO SECTION
 st.markdown("""
 <div class="nic-hero">
-    <div class="nic-badge">
-        <span>⚡</span> NATIONAL INCUBATION CENTER • VENTURE ARCHITECTURE AI
-    </div>
-    <h1>NIC Venture Forge</h1>
+    <h1>NIC Venture Studio</h1>
     <p>
-        The National Incubation Center's AI-powered Venture Architecture Engine. Built for venture builders, 
-        incubators, and founders, NIC Venture Forge transforms raw problems and disruptive ideas into 
-        institutional-grade startup investment and execution memoranda in sub-second inference speeds.
+        The National Incubation Center's AI-powered Venture Architecture Engine. Built for founders, incubators, and builders to transform raw problem statements into institutional-grade execution plans.
     </p>
     <div class="nic-cta-box">
         <div class="nic-cta-text">
@@ -287,51 +234,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# REAL-TIME PLATFORM & LATENCY METRICS
-st.markdown("### 📊 Platform Architecture & Performance Telemetry")
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric(
-        label="Groq LPU Latency",
-        value="~280 ms",
-        delta="-85% vs Cloud GPUs",
-        delta_color="normal",
-        help="Ultra-low first-token latency delivered by Groq Language Processing Unit (LPU) architecture."
-    )
-
-with col2:
-    st.metric(
-        label="Generation Velocity",
-        value="~750 T/s",
-        delta="Real-Time Streaming",
-        delta_color="normal",
-        help="Throughput velocity of the LLaMA 3.3 70B parameter engine."
-    )
-
-with col3:
-    st.metric(
-        label="Venture Depth",
-        value="6 Core Pillars",
-        delta="Institutional Standard",
-        delta_color="normal",
-        help="Comprehensive investment memo covering ICP, Unit Economics, MVP Tech, and Moats."
-    )
-
-with col4:
-    st.metric(
-        label="Incubation Readiness",
-        value="100% Cohort Ready",
-        delta="NIC Framework Aligned",
-        delta_color="normal",
-        help="Engine calibrated to National Incubation Center investment committee standards."
-    )
-
-st.write("")
-st.write("")
-
-# PLATFORM FEATURE BREAKDOWN
-st.markdown("### 🏛️ Venture Memorandum Architecture Breakdown")
+st.markdown("### Structured venture execution framework for investor evaluation.")
 st.markdown("Every venture synthesized through the platform undergoes rigorous structural formulation across 6 core pillars:")
 
 f_col1, f_col2, f_col3 = st.columns(3)
@@ -408,7 +311,6 @@ with f_col3:
 st.write("")
 st.write("")
 
-# HOW TO USE / WORKFLOW
 st.markdown("### 📋 How to Architect Your Startup")
 
 step1, step2, step3 = st.columns(3)
@@ -446,14 +348,12 @@ with step3:
     </div>
     """, unsafe_allow_html=True)
 
-# Direct launch action button
 st.write("")
 col_cta1, col_cta2, col_cta3 = st.columns([1, 2, 1])
 with col_cta2:
     if st.button("🚀 Proceed to Startup Generator", type="primary", use_container_width=True):
         st.switch_page("pages/1_💡_Startup_Generator.py")
 
-# FIXED BOTTOM FOOTER
 st.markdown("""
 <div class="nic-footer-container">
     <p class="nic-footer-text">
